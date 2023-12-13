@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.dhbin.isme.pms.mapper.RoleMapper">
+
+    <select id="findRolesByUserId" resultType="cn.dhbin.isme.pms.domain.entity.Role">
+        select *
+        from role r
+        where r.id in (select urr.roleId from user_roles_role urr where urr.userId = #{userId});
+    </select>
+
+</mapper>

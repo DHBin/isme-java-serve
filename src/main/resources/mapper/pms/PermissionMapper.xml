@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.dhbin.isme.pms.mapper.PermissionMapper">
+
+    <select id="findByRoleId" resultType="cn.dhbin.isme.pms.domain.entity.Permission">
+        select *
+        from permission p
+        where p.id in (select rpp.permissionId from role_permissions_permission rpp where rpp.roleId = #{roleId})
+    </select>
+
+</mapper>
