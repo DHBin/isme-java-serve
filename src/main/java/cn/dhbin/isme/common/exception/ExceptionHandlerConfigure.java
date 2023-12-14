@@ -1,6 +1,8 @@
 package cn.dhbin.isme.common.exception;
 
 import cn.dev33.satoken.exception.NotLoginException;
+import cn.dev33.satoken.exception.NotRoleException;
+import cn.dhbin.isme.common.response.BizResponseCode;
 import cn.dhbin.isme.common.response.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -60,4 +62,21 @@ public class ExceptionHandlerConfigure {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(r);
     }
 
+
+    /**
+     * 处理角色无权操作异常
+     *
+     * @param exception ex
+     * @return r
+     */
+    @ResponseBody
+    @ExceptionHandler
+    public R<String> handle(NotRoleException exception) {
+        log.debug("当前用户角色无权操作", exception);
+        BizResponseCode code = BizResponseCode.ERR_11003;
+        R<String> r = new R<>();
+        r.setMessage(code.getMsg())
+            .setCode(code.getCode());
+        return r;
+    }
 }
