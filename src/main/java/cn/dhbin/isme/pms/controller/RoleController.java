@@ -1,18 +1,35 @@
 package cn.dhbin.isme.pms.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
+import cn.dhbin.isme.common.auth.RoleType;
+import cn.dhbin.isme.common.auth.Roles;
 import cn.dhbin.isme.common.auth.SaTokenConfigure;
+import cn.dhbin.isme.common.response.Page;
 import cn.dhbin.isme.common.response.R;
+import cn.dhbin.isme.pms.domain.dto.PermissionDto;
+import cn.dhbin.isme.pms.domain.dto.RoleDto;
+import cn.dhbin.isme.pms.domain.dto.RolePageDto;
+import cn.dhbin.isme.pms.domain.entity.Role;
+import cn.dhbin.isme.pms.domain.request.AddRolePermissionsRequest;
+import cn.dhbin.isme.pms.domain.request.AddRoleUsersRequest;
+import cn.dhbin.isme.pms.domain.request.CreateRoleRequest;
+import cn.dhbin.isme.pms.domain.request.RemoveRoleUsersRequest;
+import cn.dhbin.isme.pms.domain.request.RolePageRequest;
+import cn.dhbin.isme.pms.domain.request.UpdateRoleRequest;
 import cn.dhbin.isme.pms.service.RoleService;
 import cn.hutool.core.lang.tree.Tree;
+import cn.hutool.core.util.ObjectUtil;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -31,8 +48,9 @@ public class RoleController {
      * @return R
      */
     @PostMapping
-    // Todo
-    public R<Object> create() {
+    @Roles(RoleType.SUPER_ADMIN)
+    public R<Void> create(@RequestBody @Validated CreateRoleRequest request) {
+        roleService.createRole(request);
         return R.ok();
     }
 
@@ -42,9 +60,15 @@ public class RoleController {
      * @return R
      */
     @GetMapping
-    // todo
-    public R<Object> findAll() {
-        return R.ok();
+    public R<List<RoleDto>> findAll(
+        @RequestParam(value = "enable", required = false) Boolean enable
+    ) {
+        List<RoleDto> roleDtoList = roleService.lambdaQuery().eq(ObjectUtil.isNotNull(enable), Role::getEnable, enable)
+            .list()
+            .stream()
+            .map(role -> role.convert(RoleDto.class))
+            .toList();
+        return R.ok(roleDtoList);
     }
 
     /**
@@ -53,8 +77,9 @@ public class RoleController {
      * @return R
      */
     @GetMapping("/page")
-    public R<Object> findPagination() {
-        return R.ok();
+    public R<Page<RolePageDto>> findPagination(RolePageRequest request) {
+        Page<RolePageDto> ret = roleService.queryPage(request);
+        return R.ok(ret);
     }
 
     /**
@@ -63,8 +88,9 @@ public class RoleController {
      * @return R
      */
     @GetMapping("/permissions")
-    public R<Object> findRolePermissions() {
-        return R.ok();
+    public R<List<PermissionDto>> findRolePermissions(Long id) {
+        List<PermissionDto> permissionDtoList = roleService.findRolePermissions(id);
+        return R.ok(permissionDtoList);
     }
 
 
@@ -74,9 +100,10 @@ public class RoleController {
      * @return R
      */
     @GetMapping("{id}")
-    // todo
-    public R<Object> findOne(@PathVariable Long id) {
-        return R.ok();
+    @Roles(RoleType.SUPER_ADMIN)
+    public R<RoleDto> findOne(@PathVariable Long id) {
+        RoleDto roleDto = roleService.getById(id).convert(RoleDto.class);
+        return R.ok(roleDto);
     }
 
 
@@ -86,8 +113,9 @@ public class RoleController {
      * @return R
      */
     @PatchMapping("{id}")
-    // todo
-    public R<Object> update(@PathVariable Long id) {
+    @Roles({RoleType.SUPER_ADMIN, RoleType.SYS_ADMIN, RoleType.ROLE_PMS})
+    public R<Void> update(@PathVariable Long id, @RequestBody UpdateRoleRequest request) {
+        roleService.updateRole(id, request);
         return R.ok();
     }
 
@@ -98,8 +126,9 @@ public class RoleController {
      * @return R
      */
     @DeleteMapping("{id}")
-    // todo
-    public R<Object> remove(@PathVariable Long id) {
+    @Roles({RoleType.SUPER_ADMIN})
+    public R<Void> remove(@PathVariable Long id) {
+        roleService.removeRole(id);
         return R.ok();
     }
 
@@ -109,9 +138,10 @@ public class RoleController {
      *
      * @return R
      */
-    // todo
     @PostMapping("/permissions/add")
-    public R<Object> addRolePermissions() {
+    @Roles({RoleType.SUPER_ADMIN})
+    public R<Void> addRolePermissions(@RequestBody @Validated AddRolePermissionsRequest request) {
+        roleService.addRolePermissions(request);
         return R.ok();
     }
 
@@ -134,13 +164,17 @@ public class RoleController {
      * @return R
      */
     @PatchMapping("/users/add/{roleId}")
-    public R<Object> addRoleUsers(@PathVariable Long roleId) {
+    @Roles({RoleType.SUPER_ADMIN})
+    public R<Void> addRoleUsers(@PathVariable Long roleId, @RequestBody AddRoleUsersRequest request) {
+        roleService.addRoleUsers(roleId, request);
         return null;
     }
 
 
     @PatchMapping("/users/remove/{roleId}")
-    public R<Object> removeRoleUsers(@PathVariable Long roleId) {
+    @Roles({RoleType.SUPER_ADMIN})
+    public R<Void> removeRoleUsers(@PathVariable Long roleId, @RequestBody RemoveRoleUsersRequest request) {
+        roleService.removeRoleUsers(roleId, request);
         return R.ok();
     }
 
