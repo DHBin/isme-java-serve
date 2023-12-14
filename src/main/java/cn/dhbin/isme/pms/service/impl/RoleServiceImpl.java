@@ -148,6 +148,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void removeRole(Long id) {
         Role role = getById(id);
         if (role == null) {
@@ -157,6 +158,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
             throw new BadRequestException("不允许修改超级管理员");
         }
         removeById(id);
+        userRoleService.lambdaUpdate().eq(UserRole::getRoleId, id).remove();
+        rolePermissionService.lambdaUpdate().eq(RolePermission::getRoleId, id).remove();
     }
 
     @Override
