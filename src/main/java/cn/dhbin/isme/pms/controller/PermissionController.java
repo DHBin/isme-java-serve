@@ -1,11 +1,22 @@
 package cn.dhbin.isme.pms.controller;
 
+import cn.dhbin.isme.common.preview.Preview;
 import cn.dhbin.isme.common.response.R;
+import cn.dhbin.isme.pms.domain.dto.PermissionDto;
+import cn.dhbin.isme.pms.domain.entity.Permission;
+import cn.dhbin.isme.pms.domain.request.CreatePermissionRequest;
+import cn.dhbin.isme.pms.domain.request.UpdatePermissionRequest;
+import cn.dhbin.isme.pms.service.PermissionService;
+import cn.hutool.core.lang.tree.Tree;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,8 +27,11 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/permission")
+@RequiredArgsConstructor
 public class PermissionController {
 
+
+    private final PermissionService permissionService;
 
     /**
      * 新建权限
@@ -25,8 +39,9 @@ public class PermissionController {
      * @return R
      */
     @PostMapping
-    // Todo
-    public R<Object> create() {
+    @Preview
+    public R<Void> create(@RequestBody @Validated CreatePermissionRequest request) {
+        permissionService.create(request);
         return R.ok();
     }
 
@@ -37,8 +52,9 @@ public class PermissionController {
      * @return R
      */
     @PostMapping("/batch")
-    // todo
-    public R<Object> batchCreate() {
+    @Preview
+    public R<Void> batchCreate(@RequestBody @Validated List<CreatePermissionRequest> request) {
+        permissionService.createBatch(request);
         return R.ok();
     }
 
@@ -48,9 +64,9 @@ public class PermissionController {
      * @return R
      */
     @GetMapping
-    // todo
-    public R<Object> findAll() {
-        return R.ok();
+    public R<List<PermissionDto>> findAll() {
+        List<PermissionDto> menu = permissionService.findAllMenu();
+        return R.ok(menu);
     }
 
     /**
@@ -59,9 +75,9 @@ public class PermissionController {
      * @return R
      */
     @GetMapping("/tree")
-    // todo
-    public R<Object> findAllTree() {
-        return R.ok();
+    public R<List<Tree<Long>>> findAllTree() {
+        List<Tree<Long>> tree = permissionService.findAllMenuTree();
+        return R.ok(tree);
     }
 
     /**
@@ -70,9 +86,9 @@ public class PermissionController {
      * @return R
      */
     @GetMapping("menu/tree")
-    // todo
-    public R<Object> findMenuTree() {
-        return R.ok();
+    public R<List<Tree<Long>>> findMenuTree() {
+        List<Tree<Long>> tree = permissionService.findAllMenuTree();
+        return R.ok(tree);
     }
 
     /**
@@ -81,9 +97,9 @@ public class PermissionController {
      * @return R
      */
     @GetMapping("{id}")
-    // todo
-    public R<Object> findOne(@PathVariable Long id) {
-        return R.ok();
+    public R<PermissionDto> findOne(@PathVariable Long id) {
+        PermissionDto permissionDto = permissionService.getById(id).convert(PermissionDto.class);
+        return R.ok(permissionDto);
     }
 
     /**
@@ -92,8 +108,10 @@ public class PermissionController {
      * @return R
      */
     @PatchMapping("{id}")
-    // todo
-    public R<Object> update(@PathVariable Long id) {
+    public R<Object> update(@PathVariable Long id, @RequestBody UpdatePermissionRequest request) {
+        Permission permission = request.convert(Permission.class);
+        permission.setId(id);
+        permissionService.updateById(permission);
         return R.ok();
     }
 
@@ -103,8 +121,8 @@ public class PermissionController {
      * @return R
      */
     @DeleteMapping("{id}")
-    // todo
     public R<Object> remove(@PathVariable Long id) {
+        permissionService.removeById(id);
         return R.ok();
     }
 
@@ -114,10 +132,10 @@ public class PermissionController {
      *
      * @return R
      */
-    @GetMapping("/button-and-api/:parentId")
-    // todo
-    public R<Object> findButtonAndApi() {
-        return R.ok();
+    @GetMapping("/button-and-api/{parentId}")
+    public R<List<Permission>> findButtonAndApi(@PathVariable Long parentId) {
+        List<Permission> permissions = permissionService.findButtonAndApi(parentId);
+        return R.ok(permissions);
     }
 
     /**
@@ -126,9 +144,9 @@ public class PermissionController {
      * @return R
      */
     @GetMapping("/menu/validate")
-    // todo
-    public R<Object> validateMenuPath() {
-        return R.ok();
+    public R<Object> validateMenuPath(String path) {
+        boolean b = permissionService.validateMenuPath(path);
+        return R.ok(b);
     }
 
 }

@@ -7,10 +7,8 @@ import cn.dhbin.isme.pms.domain.entity.Role;
 import cn.dhbin.isme.pms.mapper.RoleMapper;
 import cn.dhbin.isme.pms.service.PermissionService;
 import cn.dhbin.isme.pms.service.RoleService;
-import cn.hutool.core.bean.BeanUtil;
+import cn.dhbin.isme.pms.util.PermissionUtil;
 import cn.hutool.core.lang.tree.Tree;
-import cn.hutool.core.lang.tree.TreeNode;
-import cn.hutool.core.lang.tree.TreeUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -41,17 +39,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         List<Permission> permissions =
             PmsConstant.ROLE_ADMIN.equals(roleCode) ? permissionService.list()
                 : permissionService.findByRoleId(role.getId());
-        List<TreeNode<Long>> nodes = permissions.stream().map(permission -> {
-            TreeNode<Long> treeNode = new TreeNode<>();
-            treeNode.setId(permission.getId());
-            treeNode.setParentId(permission.getParentId());
-            treeNode.setWeight(permission.getOrder());
-            treeNode.setName(permission.getName());
-            treeNode.setExtra(BeanUtil.beanToMap(permission));
-            return treeNode;
-        }).toList();
 
-        return TreeUtil.build(nodes, null);
+        return PermissionUtil.toTreeNode(permissions, null);
     }
 
     @Override

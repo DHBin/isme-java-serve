@@ -1,31 +1,27 @@
-package cn.dhbin.isme.pms.domain.entity;
+package cn.dhbin.isme.pms.domain.request;
 
 import cn.dhbin.mapstruct.helper.core.Convert;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
- * 权限
+ * 创建权限
  *
  * @author dhb
  */
 @Data
-@TableName("permission")
-public class Permission implements Convert {
+public class CreatePermissionRequest implements Convert {
 
-    @TableId(type = IdType.AUTO)
-    private Long id;
-
+    @NotBlank
     private String name;
 
+    @NotBlank
     private String code;
 
+    @NotBlank
     private String type;
 
-    @TableField("parentId")
+
     private Long parentId;
 
     private String path;
@@ -38,19 +34,15 @@ public class Permission implements Convert {
 
     private String layout;
 
-    @TableField("keepAlive")
     private Boolean keepalive;
 
     private String method;
 
     private String description;
 
-    @TableField("`show`")
     private Boolean show;
 
     private Boolean enable;
 
-    @TableField("`order`")
     private Integer order;
-
 }

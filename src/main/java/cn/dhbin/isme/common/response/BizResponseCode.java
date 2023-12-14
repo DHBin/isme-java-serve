@@ -27,7 +27,7 @@ public enum BizResponseCode {
 
     ERR_11005(11005, "您目前暂无此角色或已被禁用，请联系管理员"),
 
-    ;
+    ERR_30001(30001, "预览环境不支持此操作");
 
     private final int code;
 

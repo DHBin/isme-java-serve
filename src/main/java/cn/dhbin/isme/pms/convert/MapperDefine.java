@@ -2,13 +2,17 @@ package cn.dhbin.isme.pms.convert;
 
 import static cn.dhbin.isme.common.mapstruct.MapstructConstant.DEFAULT_COMPONENT_MODEL;
 
+import cn.dhbin.isme.pms.domain.dto.PermissionDto;
 import cn.dhbin.isme.pms.domain.dto.ProfileDto;
 import cn.dhbin.isme.pms.domain.dto.RoleDto;
 import cn.dhbin.isme.pms.domain.dto.UserDetailDto;
+import cn.dhbin.isme.pms.domain.entity.Permission;
 import cn.dhbin.isme.pms.domain.entity.Profile;
 import cn.dhbin.isme.pms.domain.entity.Role;
 import cn.dhbin.isme.pms.domain.entity.User;
+import cn.dhbin.isme.pms.domain.request.CreatePermissionRequest;
 import cn.dhbin.isme.pms.domain.request.RegisterUserRequest;
+import cn.dhbin.isme.pms.domain.request.UpdatePermissionRequest;
 import cn.dhbin.mapstruct.helper.core.BeanConvertMapper;
 import org.mapstruct.Mapper;
 
@@ -58,6 +62,33 @@ public class MapperDefine {
      */
     @Mapper(componentModel = DEFAULT_COMPONENT_MODEL)
     public interface ProfileDtoToProfile extends BeanConvertMapper<ProfileDto, Profile> {
+    }
+
+
+    /**
+     * CreatePermissionRequestToPermission
+     */
+    @Mapper(componentModel = DEFAULT_COMPONENT_MODEL)
+    public interface CreatePermissionRequestToPermission
+        extends BeanConvertMapper<CreatePermissionRequest, Permission> {
+
+    }
+
+    /**
+     * PermissionToPermissionDto
+     */
+    @Mapper(componentModel = DEFAULT_COMPONENT_MODEL)
+    public interface PermissionToPermissionDto extends BeanConvertMapper<Permission, PermissionDto> {
+    }
+
+
+    /**
+     * UpdatePermissionRequestToPermission
+     */
+    @Mapper(componentModel = DEFAULT_COMPONENT_MODEL)
+    public interface UpdatePermissionRequestToPermission
+        extends BeanConvertMapper<UpdatePermissionRequest, Permission> {
+
     }
 
 }

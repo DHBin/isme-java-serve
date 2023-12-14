@@ -50,7 +50,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public LoginTokenDto login(LoginRequest request) {
-        if (StrUtil.isBlank(request.getCaptchaKey()) || !captchaService.verify(request.getCaptchaKey(), request.getCaptcha())) {
+        if (StrUtil.isBlank(request.getCaptchaKey())
+            || !captchaService.verify(request.getCaptchaKey(), request.getCaptcha())) {
             throw new BizException(BizResponseCode.ERR_10003);
         }
         User user = lambdaQuery().eq(User::getUsername, request.getUsername()).one();
