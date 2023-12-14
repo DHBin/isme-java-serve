@@ -84,7 +84,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         userDetailDto.setProfile(profileDto);
         userDetailDto.setRoles(roleDtoList);
-        userDetailDto.setCurrentRole(roleDtoList.getFirst());
+        for (RoleDto roleDto : roleDtoList) {
+            if (roleDto.getCode().equals(roleCode)) {
+                userDetailDto.setCurrentRole(roleDto);
+                break;
+            }
+        }
         return userDetailDto;
     }
 
