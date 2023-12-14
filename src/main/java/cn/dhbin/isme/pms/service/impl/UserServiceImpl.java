@@ -6,25 +6,33 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.dhbin.isme.common.auth.SaTokenConfigure;
 import cn.dhbin.isme.common.exception.BizException;
 import cn.dhbin.isme.common.response.BizResponseCode;
+import cn.dhbin.isme.common.response.Page;
 import cn.dhbin.isme.pms.domain.dto.LoginTokenDto;
 import cn.dhbin.isme.pms.domain.dto.ProfileDto;
 import cn.dhbin.isme.pms.domain.dto.RoleDto;
 import cn.dhbin.isme.pms.domain.dto.UserDetailDto;
+import cn.dhbin.isme.pms.domain.dto.UserPageDto;
 import cn.dhbin.isme.pms.domain.entity.Profile;
 import cn.dhbin.isme.pms.domain.entity.Role;
 import cn.dhbin.isme.pms.domain.entity.User;
 import cn.dhbin.isme.pms.domain.entity.UserRole;
+import cn.dhbin.isme.pms.domain.request.AddUserRolesRequest;
 import cn.dhbin.isme.pms.domain.request.ChangePasswordRequest;
 import cn.dhbin.isme.pms.domain.request.LoginRequest;
 import cn.dhbin.isme.pms.domain.request.RegisterUserRequest;
+import cn.dhbin.isme.pms.domain.request.UpdatePasswordRequest;
+import cn.dhbin.isme.pms.domain.request.UserPageRequest;
 import cn.dhbin.isme.pms.mapper.UserMapper;
 import cn.dhbin.isme.pms.service.CaptchaService;
 import cn.dhbin.isme.pms.service.ProfileService;
 import cn.dhbin.isme.pms.service.RoleService;
 import cn.dhbin.isme.pms.service.UserRoleService;
 import cn.dhbin.isme.pms.service.UserService;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.BCrypt;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -163,6 +171,61 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             .eq(User::getUsername, username)
             .update();
         StpUtil.logout();
+    }
+
+    @Override
+    public Page<UserPageDto> queryPage(UserPageRequest request) {
+        IPage<User> qp = request.toPage();
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(StrUtil.isNotBlank(request.getUsername()), User::getUsername, request.getUsername())
+            .or()
+            .eq(ObjectUtil.isNotNull(request.getEnable()), User::getEnable, request.getEnable());
+
+        IPage<UserPageDto> ret = page(qp, queryWrapper).convert(user -> {
+            UserPageDto dto = user.convert(UserPageDto.class);
+            Profile profile = profileService.findByUserId(user.getId());
+            dto.setAddress(profile.getAddress());
+            dto.setEmail(profile.getEmail());
+            dto.setAvatar(profile.getAvatar());
+            dto.setGender(profile.getGender());
+            List<RoleDto> roleDtoList = roleService.findRolesByUserId(user.getId()).stream()
+                .map(role -> role.convert(RoleDto.class)).toList();
+            dto.setRoles(roleDtoList);
+            return dto;
+        });
+        return Page.convert(ret);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void removeUser(Long id) {
+        if (id == 1) {
+            throw new BizException(BizResponseCode.ERR_11006, "不能删除根用户");
+        }
+        removeById(id);
+        profileService.lambdaUpdate().eq(Profile::getUserId, id).remove();
+    }
+
+    @Override
+    public void resetPassword(Long userId, UpdatePasswordRequest request) {
+        String newPw = BCrypt.hashpw(request.getPassword());
+        lambdaUpdate().eq(User::getId, userId)
+            .set(User::getPassword, newPw)
+            .update();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void addRoles(Long userId, AddUserRolesRequest request) {
+        userRoleService.lambdaUpdate().eq(UserRole::getUserId, userId).remove();
+        List<UserRole> list = request.getRoleIds().stream()
+            .map(roleId -> {
+                UserRole userRole = new UserRole();
+                userRole.setUserId(userId);
+                userRole.setRoleId(roleId);
+                return userRole;
+            }).toList();
+        userRoleService.saveBatch(list);
     }
 
 
