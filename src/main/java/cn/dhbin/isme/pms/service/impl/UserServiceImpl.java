@@ -69,7 +69,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BizException(BizResponseCode.ERR_10002);
         }
         // 预览环境下可快速登录，不用验证码
-        if (Boolean.TRUE.equals(request.getIsQuick()) && previewProperties.getPreview()) {
+        if (Boolean.TRUE.equals(request.getIsQuick()) && Boolean.TRUE.equals(previewProperties.getPreview())) {
             return login(request, user);
         }
         if (StrUtil.isBlank(request.getCaptchaKey())
