@@ -8,6 +8,7 @@ import cn.dhbin.isme.pms.domain.request.CreatePermissionRequest;
 import cn.dhbin.isme.pms.domain.request.UpdatePermissionRequest;
 import cn.dhbin.isme.pms.service.PermissionService;
 import cn.hutool.core.lang.tree.Tree;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/permission")
 @RequiredArgsConstructor
+@Tag(name = "权限")
 public class PermissionController {
 
 

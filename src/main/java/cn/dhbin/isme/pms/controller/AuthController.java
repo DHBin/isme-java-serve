@@ -13,6 +13,7 @@ import cn.dhbin.isme.pms.service.UserService;
 import cn.hutool.captcha.ICaptcha;
 import cn.hutool.core.convert.NumberWithFormat;
 import cn.hutool.core.lang.Pair;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "鉴权")
 public class AuthController {
 
     /**

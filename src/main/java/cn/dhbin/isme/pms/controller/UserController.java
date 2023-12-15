@@ -19,6 +19,7 @@ import cn.dhbin.isme.pms.domain.request.UpdateUserRequest;
 import cn.dhbin.isme.pms.domain.request.UserPageRequest;
 import cn.dhbin.isme.pms.service.UserService;
 import cn.hutool.core.convert.NumberWithFormat;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,6 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
+@Tag(name = "用户")
 public class UserController {
 
     private final UserService userService;
@@ -123,7 +125,7 @@ public class UserController {
      *
      * @return R
      */
-    @RequestMapping("/detail")
+    @GetMapping("/detail")
     public R<UserDetailDto> detail() {
         NumberWithFormat userId =
             (NumberWithFormat) StpUtil.getExtra(SaTokenConfigure.JWT_USER_ID_KEY);

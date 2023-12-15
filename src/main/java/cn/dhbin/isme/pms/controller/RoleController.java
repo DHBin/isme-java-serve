@@ -19,6 +19,7 @@ import cn.dhbin.isme.pms.domain.request.UpdateRoleRequest;
 import cn.dhbin.isme.pms.service.RoleService;
 import cn.hutool.core.lang.tree.Tree;
 import cn.hutool.core.util.ObjectUtil;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -38,6 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/role")
 @RequiredArgsConstructor
+@Tag(name = "角色")
 public class RoleController {
 
     private final RoleService roleService;
