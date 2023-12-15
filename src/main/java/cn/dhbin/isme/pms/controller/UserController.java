@@ -14,6 +14,8 @@ import cn.dhbin.isme.pms.domain.dto.UserPageDto;
 import cn.dhbin.isme.pms.domain.request.AddUserRolesRequest;
 import cn.dhbin.isme.pms.domain.request.RegisterUserRequest;
 import cn.dhbin.isme.pms.domain.request.UpdatePasswordRequest;
+import cn.dhbin.isme.pms.domain.request.UpdateProfileRequest;
+import cn.dhbin.isme.pms.domain.request.UpdateUserRequest;
 import cn.dhbin.isme.pms.domain.request.UserPageRequest;
 import cn.dhbin.isme.pms.service.UserService;
 import cn.hutool.core.convert.NumberWithFormat;
@@ -48,6 +50,7 @@ public class UserController {
      */
     @PostMapping
     @Roles({RoleType.SUPER_ADMIN})
+    @Preview
     public R<Void> create(@RequestBody @Validated RegisterUserRequest request) {
         userService.register(request);
         return R.ok();
@@ -73,6 +76,7 @@ public class UserController {
      */
     @DeleteMapping("{id}")
     @Roles({RoleType.SUPER_ADMIN})
+    @Preview
     public R<Void> remove(@PathVariable Long id) {
         NumberWithFormat userIdFormat = (NumberWithFormat) StpUtil.getExtra(SaTokenConfigure.JWT_USER_ID_KEY);
         if (userIdFormat.longValue() == id) {
@@ -89,9 +93,9 @@ public class UserController {
      * @return R
      */
     @PatchMapping("{id}")
-    // todo
-    public R<Object> update(@PathVariable Long id) {
-        return R.ok();
+    @Preview
+    public R<Void> update(@PathVariable Long id, @RequestBody UpdateUserRequest request) {
+        throw new BizException(BizResponseCode.ERR_11006, "接口未实现");
     }
 
 
@@ -102,8 +106,13 @@ public class UserController {
      * @return R
      */
     @PatchMapping("/profile/{id}")
-    // todo
-    public R<Object> updateProfile(@PathVariable Long id) {
+    @Preview
+    public R<Void> updateProfile(@PathVariable Long id, @RequestBody UpdateProfileRequest request) {
+        NumberWithFormat userIdFormat = (NumberWithFormat) StpUtil.getExtra(SaTokenConfigure.JWT_USER_ID_KEY);
+        if (userIdFormat.longValue() != id) {
+            throw new BizException(BizResponseCode.ERR_11004, "越权操作，用户资料只能本人修改！");
+        }
+        userService.updateProfile(id, request);
         return R.ok();
     }
 
@@ -132,9 +141,8 @@ public class UserController {
      */
     @GetMapping("/{username}")
     @Roles({RoleType.SUPER_ADMIN})
-    // todo
-    public R<Object> findByUsername(@PathVariable String username) {
-        return R.ok();
+    public R<Void> findByUsername(@PathVariable String username) {
+        throw new BizException(BizResponseCode.ERR_11006, "接口未实现");
     }
 
 
@@ -144,9 +152,8 @@ public class UserController {
      * @return R
      */
     @GetMapping("/profile/{userId}")
-    // todo
-    public R<Object> getUserProfile(@PathVariable Long userId) {
-        return R.ok();
+    public R<Void> getUserProfile(@PathVariable Long userId) {
+        throw new BizException(BizResponseCode.ERR_11006, "接口未实现");
     }
 
     /**

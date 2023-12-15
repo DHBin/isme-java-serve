@@ -1,27 +1,24 @@
-package cn.dhbin.isme.pms.domain.dto;
+package cn.dhbin.isme.pms.domain.request;
 
+import cn.dhbin.mapstruct.helper.core.Convert;
 import lombok.Data;
 
 /**
- * 用户信息
+ * 更新用户信息
  *
  * @author dhb
  */
 @Data
-public class ProfileDto {
+public class UpdateProfileRequest implements Convert {
+
 
     private Long id;
 
     private Integer gender;
 
-    private String avatar;
-
     private String address;
 
     private String email;
 
-    private Long userId;
-
     private String nickName;
-
 }

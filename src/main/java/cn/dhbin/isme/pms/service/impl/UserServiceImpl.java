@@ -21,6 +21,7 @@ import cn.dhbin.isme.pms.domain.request.ChangePasswordRequest;
 import cn.dhbin.isme.pms.domain.request.LoginRequest;
 import cn.dhbin.isme.pms.domain.request.RegisterUserRequest;
 import cn.dhbin.isme.pms.domain.request.UpdatePasswordRequest;
+import cn.dhbin.isme.pms.domain.request.UpdateProfileRequest;
 import cn.dhbin.isme.pms.domain.request.UserPageRequest;
 import cn.dhbin.isme.pms.mapper.UserMapper;
 import cn.dhbin.isme.pms.service.CaptchaService;
@@ -226,6 +227,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 return userRole;
             }).toList();
         userRoleService.saveBatch(list);
+    }
+
+    @Override
+    public void updateProfile(Long id, UpdateProfileRequest request) {
+        Profile profile = request.convert(Profile.class);
+        profileService.updateById(profile);
     }
 
 
