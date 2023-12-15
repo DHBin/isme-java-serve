@@ -7,3 +7,5 @@ sa-token:
   token-name: Authorization
   token-prefix: Bearer
   jwt-secret-key: 'd0!doc15415B0*4G0`'
+knife4j:
+  enable: true

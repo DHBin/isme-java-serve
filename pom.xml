@@ -21,6 +21,7 @@
         <mapstruct-helper-starter.version>1.0.0</mapstruct-helper-starter.version>
         <sa-token.version>1.37.0</sa-token.version>
         <mybatis-plus.version>3.5.4.1</mybatis-plus.version>
+        <knife4j.version>4.4.0</knife4j.version>
     </properties>
 
 
@@ -63,6 +64,12 @@
             <artifactId>hutool-all</artifactId>
             <version>${hutool.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+            <version>${knife4j.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
