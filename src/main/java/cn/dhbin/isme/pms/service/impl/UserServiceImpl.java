@@ -19,6 +19,7 @@ import cn.dhbin.isme.pms.domain.entity.UserRole;
 import cn.dhbin.isme.pms.domain.request.AddUserRolesRequest;
 import cn.dhbin.isme.pms.domain.request.ChangePasswordRequest;
 import cn.dhbin.isme.pms.domain.request.LoginRequest;
+import cn.dhbin.isme.pms.domain.request.RegisterUserProfileRequest;
 import cn.dhbin.isme.pms.domain.request.RegisterUserRequest;
 import cn.dhbin.isme.pms.domain.request.UpdatePasswordRequest;
 import cn.dhbin.isme.pms.domain.request.UpdateProfileRequest;
@@ -36,6 +37,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -128,7 +130,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User user = request.convert(User.class);
         user.setPassword(BCrypt.hashpw(user.getPassword()));
         this.save(user);
-        Profile profile = request.getProfile().convert(Profile.class);
+
+        Profile profile = Optional.ofNullable(request.getProfile()).orElse(new RegisterUserProfileRequest())
+            .convert(Profile.class);
         profile.setUserId(user.getId());
         List<UserRole> roleList = request.getRoleIds().stream()
             .map(roleId -> {
