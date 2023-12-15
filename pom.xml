@@ -18,6 +18,9 @@
         <java.version>21</java.version>
         <hutool.version>5.8.22</hutool.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
+        <mapstruct-helper-starter.version>1.0.0</mapstruct-helper-starter.version>
+        <sa-token.version>1.37.0</sa-token.version>
+        <mybatis-plus.version>3.5.4.1</mybatis-plus.version>
     </properties>
 
 
@@ -31,7 +34,7 @@
         <dependency>
             <groupId>cn.dhbin</groupId>
             <artifactId>mapstruct-helper-starter</artifactId>
-            <version>1.0.0</version>
+            <version>${mapstruct-helper-starter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mapstruct</groupId>
@@ -48,12 +51,12 @@
         <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-spring-boot3-starter</artifactId>
-            <version>1.37.0</version>
+            <version>${sa-token.version}</version>
         </dependency>
         <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-jwt</artifactId>
-            <version>1.37.0</version>
+            <version>${sa-token.version}</version>
         </dependency>
         <dependency>
             <groupId>cn.hutool</groupId>
@@ -63,7 +66,7 @@
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.5.4.1</version>
+            <version>${mybatis-plus.version}</version>
         </dependency>
 
         <dependency>
