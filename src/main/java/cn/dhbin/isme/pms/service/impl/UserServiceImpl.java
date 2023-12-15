@@ -5,6 +5,7 @@ import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dhbin.isme.common.auth.SaTokenConfigure;
 import cn.dhbin.isme.common.exception.BizException;
+import cn.dhbin.isme.common.preview.PreviewProperties;
 import cn.dhbin.isme.common.response.BizResponseCode;
 import cn.dhbin.isme.common.response.Page;
 import cn.dhbin.isme.pms.domain.dto.LoginTokenDto;
@@ -59,16 +60,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     private final CaptchaService captchaService;
 
+    private final PreviewProperties previewProperties;
+
     @Override
     public LoginTokenDto login(LoginRequest request) {
-        if (StrUtil.isBlank(request.getCaptchaKey())
-            || !captchaService.verify(request.getCaptchaKey(), request.getCaptcha())) {
-            throw new BizException(BizResponseCode.ERR_10003);
-        }
         User user = lambdaQuery().eq(User::getUsername, request.getUsername()).one();
         if (user == null) {
             throw new BizException(BizResponseCode.ERR_10002);
         }
+        // 预览环境下可快速登录，不用验证码
+        if (Boolean.TRUE.equals(request.getIsQuick()) && previewProperties.getPreview()) {
+            return login(request, user);
+        }
+        if (StrUtil.isBlank(request.getCaptchaKey())
+            || !captchaService.verify(request.getCaptchaKey(), request.getCaptcha())) {
+            throw new BizException(BizResponseCode.ERR_10003);
+        }
+        return login(request, user);
+    }
+
+    private LoginTokenDto login(LoginRequest request, User user) {
         boolean checkPw = BCrypt.checkpw(request.getPassword(), user.getPassword());
         if (checkPw) {
             // 查询用户的角色

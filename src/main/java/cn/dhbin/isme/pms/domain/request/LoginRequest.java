@@ -27,4 +27,6 @@ public class LoginRequest {
 
     private String captchaKey;
 
+    private Boolean isQuick;
+
 }
