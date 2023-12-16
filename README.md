@@ -63,6 +63,8 @@ H2、Mysql两种数据库，方便开发调试。基于SpringBoot、MybatisPlus�
     - `src/main/resources/application-h2.yml`修改`spring.datasource.url`为
       `jdbc:h2:file:/~/.isme/db;MODE=MySQL;DATABASE_TO_LOWER=TRUE`，启动将会在用户文件夹`.isme`生成数据库文件
 
+- 使用mysql数据库，切换`spring.profiles.active`为`mysql`，数据库初始化文件[init.sql](https://github.com/zclzone/isme-nest-serve/blob/main/init.sql)
+
 - 新建模块
     - 在`cn.dhbin.isme`包下创建你需要的模块开发
 
