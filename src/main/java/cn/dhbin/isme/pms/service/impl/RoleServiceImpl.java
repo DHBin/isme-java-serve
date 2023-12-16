@@ -205,7 +205,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
             .stream()
             .map(UserRole::getUserId).toList();
 
-        List<UserRole> permissionList = CollUtil.removeWithAddIf(request.getUserIds(), list::contains)
+        CollUtil.removeWithAddIf(request.getUserIds(), list::contains);
+        List<UserRole> permissionList = request.getUserIds()
             .stream()
             .map(userId -> {
                 UserRole userRole = new UserRole();

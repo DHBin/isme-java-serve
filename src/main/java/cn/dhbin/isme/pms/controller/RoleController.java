@@ -169,7 +169,7 @@ public class RoleController {
     @Roles({RoleType.SUPER_ADMIN})
     public R<Void> addRoleUsers(@PathVariable Long roleId, @RequestBody AddRoleUsersRequest request) {
         roleService.addRoleUsers(roleId, request);
-        return null;
+        return R.ok();
     }
 
 
