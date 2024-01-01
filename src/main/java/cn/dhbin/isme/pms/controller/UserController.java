@@ -90,14 +90,16 @@ public class UserController {
 
 
     /**
-     * 根据id更新
+     * 根据id更新角色
      *
      * @return R
      */
     @PatchMapping("{id}")
     @Preview
-    public R<Void> update(@PathVariable Long id, @RequestBody UpdateUserRequest request) {
-        throw new BizException(BizResponseCode.ERR_11006, "接口未实现");
+    public R<Void> update(@PathVariable Long id, @RequestBody AddUserRolesRequest request) {
+        //throw new BizException(BizResponseCode.ERR_11006, "接口未实现");
+        userService.addRoles(id, request);
+        return R.ok();
     }
 
 
