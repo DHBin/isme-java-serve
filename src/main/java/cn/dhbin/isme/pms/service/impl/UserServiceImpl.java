@@ -35,6 +35,7 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.BCrypt;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import java.util.List;
@@ -179,7 +180,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public void changePassword(ChangePasswordRequest request) {
         String username = (String) StpUtil.getExtra(SaTokenConfigure.JWT_USERNAME_KEY);
         User user = lambdaQuery().select(User::getPassword).eq(User::getUsername, username).one();
-        if (!BCrypt.checkpw(user.getPassword(), request.getOldPassword())) {
+        if (!BCrypt.checkpw(request.getOldPassword(),user.getPassword())) {
             throw new BizException(BizResponseCode.ERR_10004);
         }
         user.setPassword(BCrypt.hashpw(request.getNewPassword()));
@@ -191,25 +192,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public Page<UserPageDto> queryPage(UserPageRequest request) {
-        IPage<User> qp = request.toPage();
-        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(StrUtil.isNotBlank(request.getUsername()), User::getUsername, request.getUsername())
-            .or()
-            .eq(ObjectUtil.isNotNull(request.getEnable()), User::getEnable, request.getEnable());
-
-        IPage<UserPageDto> ret = page(qp, queryWrapper).convert(user -> {
-            UserPageDto dto = user.convert(UserPageDto.class);
-            Profile profile = profileService.findByUserId(user.getId());
-            dto.setAddress(profile.getAddress());
-            dto.setEmail(profile.getEmail());
-            dto.setAvatar(profile.getAvatar());
-            dto.setGender(profile.getGender());
-            List<RoleDto> roleDtoList = roleService.findRolesByUserId(user.getId()).stream()
-                .map(role -> role.convert(RoleDto.class)).toList();
+        IPage<UserPageDto> qp = request.toPage();
+        QueryWrapper<UserPageDto> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(StrUtil.isNotBlank(request.getUsername()), "username", request.getUsername())
+                .eq(ObjectUtil.isNotNull(request.getEnable()), "enable", request.getEnable())
+                .eq(ObjectUtil.isNotNull(request.getGender()), "x2.gender", request.getGender());
+        List<UserPageDto> list = getBaseMapper().SelectByWrapperList(qp, queryWrapper);
+        for (UserPageDto dto : list) {
+            List<RoleDto> roleDtoList = roleService.findRolesByUserId(dto.getId()).stream()
+                    .map(role -> role.convert(RoleDto.class)).toList();
             dto.setRoles(roleDtoList);
-            return dto;
-        });
-        return Page.convert(ret);
+        }
+        qp.setRecords(list);
+        return  Page.convert(qp);
     }
 
     @Override
