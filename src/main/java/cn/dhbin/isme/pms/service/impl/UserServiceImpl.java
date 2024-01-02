@@ -179,7 +179,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public void changePassword(ChangePasswordRequest request) {
         String username = (String) StpUtil.getExtra(SaTokenConfigure.JWT_USERNAME_KEY);
         User user = lambdaQuery().select(User::getPassword).eq(User::getUsername, username).one();
-        if (!BCrypt.checkpw(user.getPassword(), request.getOldPassword())) {
+        if (!BCrypt.checkpw(request.getOldPassword(), user.getPassword())) {
             throw new BizException(BizResponseCode.ERR_10004);
         }
         user.setPassword(BCrypt.hashpw(request.getNewPassword()));
