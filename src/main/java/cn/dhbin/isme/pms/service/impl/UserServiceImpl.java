@@ -31,6 +31,7 @@ import cn.dhbin.isme.pms.service.ProfileService;
 import cn.dhbin.isme.pms.service.RoleService;
 import cn.dhbin.isme.pms.service.UserRoleService;
 import cn.dhbin.isme.pms.service.UserService;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.BCrypt;
@@ -145,15 +146,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         Profile profile = Optional.ofNullable(request.getProfile()).orElse(new RegisterUserProfileRequest())
             .convert(Profile.class);
         profile.setUserId(user.getId());
-        List<UserRole> roleList = request.getRoleIds().stream()
-            .map(roleId -> {
-                UserRole userRole = new UserRole();
-                userRole.setUserId(user.getId());
-                userRole.setRoleId(roleId);
-                return userRole;
-            }).toList();
+        if (CollUtil.isNotEmpty(request.getRoleIds())) {
+            List<UserRole> roleList = request.getRoleIds().stream()
+                .map(roleId -> {
+                    UserRole userRole = new UserRole();
+                    userRole.setUserId(user.getId());
+                    userRole.setRoleId(roleId);
+                    return userRole;
+                }).toList();
+            userRoleService.saveBatch(roleList);
+        }
         profileService.save(profile);
-        userRoleService.saveBatch(roleList);
     }
 
     @Override
