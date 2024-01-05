@@ -8,6 +8,7 @@ import cn.dhbin.isme.pms.domain.request.CreatePermissionRequest;
 import cn.dhbin.isme.pms.domain.request.UpdatePermissionRequest;
 import cn.dhbin.isme.pms.service.PermissionService;
 import cn.hutool.core.lang.tree.Tree;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,7 @@ public class PermissionController {
      */
     @PostMapping
     @Preview
+    @Operation(summary = "新增权限")
     public R<Void> create(@RequestBody @Validated CreatePermissionRequest request) {
         permissionService.create(request);
         return R.ok();
@@ -55,6 +57,7 @@ public class PermissionController {
      */
     @PostMapping("/batch")
     @Preview
+    @Operation(summary = "批量新增权限")
     public R<Void> batchCreate(@RequestBody @Validated List<CreatePermissionRequest> request) {
         permissionService.createBatch(request);
         return R.ok();
@@ -66,6 +69,7 @@ public class PermissionController {
      * @return R
      */
     @GetMapping
+    @Operation(summary = "获取所有权限")
     public R<List<PermissionDto>> findAll() {
         List<PermissionDto> menu = permissionService.findAllMenu();
         return R.ok(menu);
@@ -77,6 +81,7 @@ public class PermissionController {
      * @return R
      */
     @GetMapping("/tree")
+    @Operation(summary = "获取所有权限树")
     public R<List<Tree<Long>>> findAllTree() {
         List<Tree<Long>> tree = permissionService.findAllMenuTree();
         return R.ok(tree);
@@ -88,6 +93,7 @@ public class PermissionController {
      * @return R
      */
     @GetMapping("menu/tree")
+    @Operation(summary = "获取菜单树")
     public R<List<Tree<Long>>> findMenuTree() {
         List<Tree<Long>> tree = permissionService.findAllMenuTree();
         return R.ok(tree);
@@ -99,6 +105,7 @@ public class PermissionController {
      * @return R
      */
     @GetMapping("{id}")
+    @Operation(summary = "根据id获取")
     public R<PermissionDto> findOne(@PathVariable Long id) {
         PermissionDto permissionDto = permissionService.getById(id).convert(PermissionDto.class);
         return R.ok(permissionDto);
@@ -110,6 +117,7 @@ public class PermissionController {
      * @return R
      */
     @PatchMapping("{id}")
+    @Operation(summary = "根据id更新")
     public R<Object> update(@PathVariable Long id, @RequestBody UpdatePermissionRequest request) {
         Permission permission = request.convert(Permission.class);
         permission.setId(id);
@@ -123,6 +131,7 @@ public class PermissionController {
      * @return R
      */
     @DeleteMapping("{id}")
+    @Operation(summary = "根据id删除")
     public R<Object> remove(@PathVariable Long id) {
         permissionService.removeById(id);
         return R.ok();
@@ -135,6 +144,7 @@ public class PermissionController {
      * @return R
      */
     @GetMapping("/button-and-api/{parentId}")
+    @Operation(summary = "根据父id获取权限列表")
     public R<List<Permission>> findButtonAndApi(@PathVariable Long parentId) {
         List<Permission> permissions = permissionService.findButtonAndApi(parentId);
         return R.ok(permissions);
@@ -146,6 +156,7 @@ public class PermissionController {
      * @return R
      */
     @GetMapping("/menu/validate")
+    @Operation(summary = "校验path存不存在menu资源内")
     public R<Object> validateMenuPath(String path) {
         boolean b = permissionService.validateMenuPath(path);
         return R.ok(b);

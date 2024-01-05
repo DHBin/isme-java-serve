@@ -19,6 +19,7 @@ import cn.dhbin.isme.pms.domain.request.UpdateUserRequest;
 import cn.dhbin.isme.pms.domain.request.UserPageRequest;
 import cn.dhbin.isme.pms.service.UserService;
 import cn.hutool.core.convert.NumberWithFormat;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -46,13 +47,14 @@ public class UserController {
 
 
     /**
-     * 新建角色
+     * 新建用户
      *
      * @return R
      */
     @PostMapping
     @Roles({RoleType.SUPER_ADMIN})
     @Preview
+    @Operation(summary = "新增用户")
     public R<Void> create(@RequestBody @Validated RegisterUserRequest request) {
         userService.register(request);
         return R.ok();
@@ -65,6 +67,7 @@ public class UserController {
      * @return R
      */
     @GetMapping
+    @Operation(summary = "获取所有")
     public R<Page<UserPageDto>> findAll(UserPageRequest request) {
         Page<UserPageDto> ret = userService.queryPage(request);
         return R.ok(ret);
@@ -79,6 +82,7 @@ public class UserController {
     @DeleteMapping("{id}")
     @Roles({RoleType.SUPER_ADMIN})
     @Preview
+    @Operation(summary = "根据id删除")
     public R<Void> remove(@PathVariable Long id) {
         NumberWithFormat userIdFormat = (NumberWithFormat) StpUtil.getExtra(SaTokenConfigure.JWT_USER_ID_KEY);
         if (userIdFormat.longValue() == id) {
@@ -90,12 +94,13 @@ public class UserController {
 
 
     /**
-     * 根据id更新角色
+     * 根据id更新
      *
      * @return R
      */
     @PatchMapping("{id}")
     @Preview
+    @Operation(summary = "根据id更新")
     public R<Void> update(@PathVariable Long id, @RequestBody AddUserRolesRequest request) {
         userService.addRoles(id, request);
         return R.ok();
@@ -110,6 +115,7 @@ public class UserController {
      */
     @PatchMapping("/profile/{id}")
     @Preview
+    @Operation(summary = "更新资料")
     public R<Void> updateProfile(@PathVariable Long id, @RequestBody UpdateProfileRequest request) {
         NumberWithFormat userIdFormat = (NumberWithFormat) StpUtil.getExtra(SaTokenConfigure.JWT_USER_ID_KEY);
         if (userIdFormat.longValue() != id) {
@@ -127,6 +133,7 @@ public class UserController {
      * @return R
      */
     @GetMapping("/detail")
+    @Operation(summary = "用户信息")
     public R<UserDetailDto> detail() {
         NumberWithFormat userId =
             (NumberWithFormat) StpUtil.getExtra(SaTokenConfigure.JWT_USER_ID_KEY);
@@ -144,6 +151,7 @@ public class UserController {
      */
     @GetMapping("/{username}")
     @Roles({RoleType.SUPER_ADMIN})
+    @Operation(summary = "根据用户名获取")
     public R<Void> findByUsername(@PathVariable String username) {
         throw new BizException(BizResponseCode.ERR_11006, "接口未实现");
     }
@@ -155,6 +163,7 @@ public class UserController {
      * @return R
      */
     @GetMapping("/profile/{userId}")
+    @Operation(summary = "查询用户的profile")
     public R<Void> getUserProfile(@PathVariable Long userId) {
         throw new BizException(BizResponseCode.ERR_11006, "接口未实现");
     }
@@ -167,6 +176,7 @@ public class UserController {
      */
     @PostMapping("/roles/add/{userId}")
     @Preview
+    @Operation(summary = "添加角色")
     public R<Object> addRoles(@PathVariable Long userId, @RequestBody @Validated AddUserRolesRequest request) {
         userService.addRoles(userId, request);
         return R.ok();
@@ -179,6 +189,7 @@ public class UserController {
      */
     @PatchMapping("password/reset/{userId}")
     @Roles({RoleType.SUPER_ADMIN})
+    @Operation(summary = "重置密码")
     public R<Object> resetPassword(@PathVariable Long userId, @RequestBody @Validated UpdatePasswordRequest request) {
         userService.resetPassword(userId, request);
         return R.ok();
