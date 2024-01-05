@@ -7,6 +7,8 @@ import cn.dhbin.isme.common.response.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -79,4 +81,19 @@ public class ExceptionHandlerConfigure {
             .setCode(code.getCode());
         return r;
     }
+
+    /**
+     * 处理参数错误异常
+     *
+     * @param exception ex
+     * @return r
+     */
+    @ResponseBody
+    @ExceptionHandler
+    public R<String> handle(MethodArgumentNotValidException exception) {
+        ObjectError error = exception.getBindingResult().getAllErrors().getFirst();
+        String defaultMessage = error.getDefaultMessage();
+        return R.build(new BizException(BizResponseCode.ERR_400, defaultMessage));
+    }
+
 }
