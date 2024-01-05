@@ -1,4 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.dhbin.isme.pms.mapper.UserMapper">
+    <select id="pageDetail" resultType="cn.dhbin.isme.pms.domain.dto.UserPageDto">
+        select u.id as id,
+               u.username as username,
+               u.enable as enable,
+               u.createTime as createTime,
+               u.updateTime as updateTIme,
+               p.gender as gender,
+               p.avatar as avatar,
+               p.address as address,
+               p.email as email
+        from `user` u
+                 left join profile p on u.id = p.userId
+        <where>
+            <if test="username != null and username != ''">
+                u.username = #{username}
+            </if>
+            <if test="gender != null">
+                p.gender = #{gender}
+            </if>
+            <if test="enable != null">
+                u.enable = #{enable}
+            </if>
+        </where>
+    </select>
 </mapper>

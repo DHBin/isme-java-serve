@@ -200,18 +200,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             .or()
             .eq(ObjectUtil.isNotNull(request.getEnable()), User::getEnable, request.getEnable());
 
-        IPage<UserPageDto> ret = page(qp, queryWrapper).convert(user -> {
-            UserPageDto dto = user.convert(UserPageDto.class);
-            Profile profile = profileService.findByUserId(user.getId());
-            dto.setAddress(profile.getAddress());
-            dto.setEmail(profile.getEmail());
-            dto.setAvatar(profile.getAvatar());
-            dto.setGender(profile.getGender());
-            List<RoleDto> roleDtoList = roleService.findRolesByUserId(user.getId()).stream()
-                .map(role -> role.convert(RoleDto.class)).toList();
-            dto.setRoles(roleDtoList);
-            return dto;
-        });
+        IPage<UserPageDto> ret = getBaseMapper().pageDetail(qp,
+                request.getUsername(),
+                request.getGender(),
+                request.getEnable())
+            .convert(dto -> {
+                List<RoleDto> roleDtoList = roleService.findRolesByUserId(dto.getId()).stream()
+                    .map(role -> role.convert(RoleDto.class)).toList();
+                dto.setRoles(roleDtoList);
+                return dto;
+            });
         return Page.convert(ret);
     }
 
