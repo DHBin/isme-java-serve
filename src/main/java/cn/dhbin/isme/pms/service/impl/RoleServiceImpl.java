@@ -30,6 +30,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -135,16 +136,26 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         if (RoleType.SUPER_ADMIN.equals(role.getCode())) {
             throw new BadRequestException("不允许修改超级管理员");
         }
+        if (StrUtil.isNotBlank(request.getName())) {
+            role.setName(request.getName());
+        }
+        if (ObjectUtil.isNotNull(request.getEnable())) {
+            role.setEnable(request.getEnable());
+        }
         updateById(role);
-        rolePermissionService.lambdaUpdate().eq(RolePermission::getRoleId, id).remove();
-        List<RolePermission> permissionList = request.getPermissionIds().stream()
-            .map(permId -> {
-                RolePermission rolePermission = new RolePermission();
-                rolePermission.setRoleId(id);
-                rolePermission.setPermissionId(permId);
-                return rolePermission;
-            }).toList();
-        rolePermissionService.saveBatch(permissionList);
+        if (request.getPermissionIds() != null) {
+            rolePermissionService.lambdaUpdate().eq(RolePermission::getRoleId, id).remove();
+            if (!request.getPermissionIds().isEmpty()) {
+                List<RolePermission> permissionList = request.getPermissionIds().stream()
+                    .map(permId -> {
+                        RolePermission rolePermission = new RolePermission();
+                        rolePermission.setRoleId(id);
+                        rolePermission.setPermissionId(permId);
+                        return rolePermission;
+                    }).toList();
+                rolePermissionService.saveBatch(permissionList);
+            }
+        }
     }
 
     @Override

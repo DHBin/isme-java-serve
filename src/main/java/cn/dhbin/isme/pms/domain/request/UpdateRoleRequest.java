@@ -11,8 +11,6 @@ import lombok.Data;
 @Data
 public class UpdateRoleRequest {
 
-    private String code;
-
     private String name;
 
     private Boolean enable;
