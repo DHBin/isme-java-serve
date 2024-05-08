@@ -143,10 +143,10 @@ public class PermissionController {
      *
      * @return R
      */
-    @GetMapping("/button-and-api/{parentId}")
+    @GetMapping("/button/{parentId}")
     @Operation(summary = "根据父id获取权限列表")
     public R<List<Permission>> findButtonAndApi(@PathVariable Long parentId) {
-        List<Permission> permissions = permissionService.findButtonAndApi(parentId);
+        List<Permission> permissions = permissionService.findButton(parentId);
         return R.ok(permissions);
     }
 
