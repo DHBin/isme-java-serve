@@ -21,6 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permission>
     implements PermissionService {
 
+    private static final String TYPE_MENU = "MENU";
+    private static final String TYPE_BUTTON = "BUTTON";
+
+
     @Override
     public List<Permission> findByRoleId(Long roleId) {
         return getBaseMapper().findByRoleId(roleId);
@@ -42,7 +46,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 
     @Override
     public List<PermissionDto> findAllMenu() {
-        return lambdaQuery().eq(Permission::getType, "MENU")
+        return lambdaQuery().eq(Permission::getType, TYPE_MENU)
             .list()
             .stream()
             .map(permission -> permission.convert(PermissionDto.class))
@@ -51,7 +55,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 
     @Override
     public List<Tree<Long>> findAllMenuTree() {
-        List<Permission> permissions = lambdaQuery().eq(Permission::getType, "MENU")
+        List<Permission> permissions = lambdaQuery().eq(Permission::getType, TYPE_MENU)
             .orderByAsc(Permission::getOrder)
             .list()
             .stream()
@@ -60,8 +64,10 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     }
 
     @Override
-    public List<Permission> findButtonAndApi(Long parentId) {
-        return lambdaQuery().in(Permission::getType, "BUTTON", "API")
+    public List<Permission> findButton(Long parentId) {
+        return lambdaQuery()
+            .eq(Permission::getParentId, parentId)
+            .in(Permission::getType, TYPE_BUTTON)
             .orderByAsc(Permission::getOrder)
             .list()
             .stream()

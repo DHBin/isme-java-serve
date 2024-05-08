@@ -52,12 +52,12 @@ public interface PermissionService extends IService<Permission> {
     List<Tree<Long>> findAllMenuTree();
 
     /**
-     * 查询按钮、api
+     * 查询按钮
      *
      * @param parentId 父节点id
      * @return 权限列表
      */
-    List<Permission> findButtonAndApi(Long parentId);
+    List<Permission> findButton(Long parentId);
 
     /**
      * 校验 path 存不存在menu资源内
