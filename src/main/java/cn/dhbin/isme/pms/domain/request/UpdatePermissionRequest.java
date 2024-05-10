@@ -32,7 +32,7 @@ public class UpdatePermissionRequest implements Convert {
 
     private String layout;
 
-    private Boolean keepalive;
+    private Boolean keepAlive;
 
     private String method;
 
