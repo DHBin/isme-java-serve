@@ -145,8 +145,10 @@ public class PermissionController {
      */
     @GetMapping("/button/{parentId}")
     @Operation(summary = "根据父id获取权限列表")
-    public R<List<Permission>> findButtonAndApi(@PathVariable Long parentId) {
-        List<Permission> permissions = permissionService.findButton(parentId);
+    public R<List<PermissionDto>> findButtonAndApi(@PathVariable Long parentId) {
+        List<PermissionDto> permissions = permissionService.findButton(parentId)
+            .stream().map(permission -> permission.convert(PermissionDto.class))
+            .toList();
         return R.ok(permissions);
     }
 

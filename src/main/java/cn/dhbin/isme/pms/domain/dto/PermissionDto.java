@@ -30,7 +30,7 @@ public class PermissionDto {
 
     private String layout;
 
-    private Boolean keepalive;
+    private Boolean keepAlive;
 
     private String method;
 

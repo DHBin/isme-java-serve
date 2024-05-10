@@ -39,7 +39,7 @@ public class Permission implements Convert {
     private String layout;
 
     @TableField("keepAlive")
-    private Boolean keepalive;
+    private Boolean keepAlive;
 
     private String method;
 
