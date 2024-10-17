@@ -24,6 +24,7 @@ import cn.dhbin.isme.pms.domain.request.RegisterUserProfileRequest;
 import cn.dhbin.isme.pms.domain.request.RegisterUserRequest;
 import cn.dhbin.isme.pms.domain.request.UpdatePasswordRequest;
 import cn.dhbin.isme.pms.domain.request.UpdateProfileRequest;
+import cn.dhbin.isme.pms.domain.request.UpdateUserRequest;
 import cn.dhbin.isme.pms.domain.request.UserPageRequest;
 import cn.dhbin.isme.pms.mapper.UserMapper;
 import cn.dhbin.isme.pms.service.CaptchaService;
@@ -249,6 +250,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public void updateProfile(Long id, UpdateProfileRequest request) {
         Profile profile = request.convert(Profile.class);
         profileService.updateById(profile);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateById(Long id, UpdateUserRequest request) {
+        if (request.getRoleIds() != null) {
+            AddUserRolesRequest addUserRolesRequest = new AddUserRolesRequest();
+            addUserRolesRequest.setRoleIds(request.getRoleIds());
+            addRoles(id, addUserRolesRequest);
+        }
+        if (request.getEnable() != null) {
+            lambdaUpdate().eq(User::getId, id)
+                .set(User::getEnable, request.getEnable())
+                .update();
+        }
     }
 
 

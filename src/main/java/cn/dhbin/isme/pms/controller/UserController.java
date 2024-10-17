@@ -101,8 +101,8 @@ public class UserController {
     @PatchMapping("{id}")
     @Preview
     @Operation(summary = "根据id更新")
-    public R<Void> update(@PathVariable Long id, @RequestBody AddUserRolesRequest request) {
-        userService.addRoles(id, request);
+    public R<Void> update(@PathVariable Long id, @RequestBody UpdateUserRequest request) {
+        userService.updateById(id, request);
         return R.ok();
     }
 

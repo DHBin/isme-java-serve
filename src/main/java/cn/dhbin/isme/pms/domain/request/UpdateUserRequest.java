@@ -1,5 +1,6 @@
 package cn.dhbin.isme.pms.domain.request;
 
+import java.util.List;
 import lombok.Data;
 
 /**
@@ -10,6 +11,8 @@ import lombok.Data;
 @Data
 public class UpdateUserRequest {
 
-    private String password;
+    private List<Long> roleIds;
+
+    private Boolean enable;
 
 }

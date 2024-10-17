@@ -11,6 +11,7 @@ import cn.dhbin.isme.pms.domain.request.LoginRequest;
 import cn.dhbin.isme.pms.domain.request.RegisterUserRequest;
 import cn.dhbin.isme.pms.domain.request.UpdatePasswordRequest;
 import cn.dhbin.isme.pms.domain.request.UpdateProfileRequest;
+import cn.dhbin.isme.pms.domain.request.UpdateUserRequest;
 import cn.dhbin.isme.pms.domain.request.UserPageRequest;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -104,4 +105,12 @@ public interface UserService extends IService<User> {
      * @param request 用户信息
      */
     void updateProfile(Long id, UpdateProfileRequest request);
+
+    /**
+     * 更新用户
+     *
+     * @param id      用户id
+     * @param request 用户信息
+     */
+    void updateById(Long id, UpdateUserRequest request);
 }
