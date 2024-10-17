@@ -83,7 +83,7 @@ public class PermissionController {
     @GetMapping("/tree")
     @Operation(summary = "获取所有权限树")
     public R<List<Tree<Long>>> findAllTree() {
-        List<Tree<Long>> tree = permissionService.findAllMenuTree();
+        List<Tree<Long>> tree = permissionService.findAllTree();
         return R.ok(tree);
     }
 

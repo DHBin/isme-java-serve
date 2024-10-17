@@ -64,6 +64,16 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     }
 
     @Override
+    public List<Tree<Long>> findAllTree() {
+        List<Permission> permissions = lambdaQuery()
+            .orderByAsc(Permission::getOrder)
+            .list()
+            .stream()
+            .toList();
+        return PermissionUtil.toTreeNode(permissions, null);
+    }
+
+    @Override
     public List<Permission> findButton(Long parentId) {
         return lambdaQuery()
             .eq(Permission::getParentId, parentId)

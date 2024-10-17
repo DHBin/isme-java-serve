@@ -51,6 +51,14 @@ public interface PermissionService extends IService<Permission> {
      */
     List<Tree<Long>> findAllMenuTree();
 
+
+    /**
+     * 查询所有权限，并构建树
+     *
+     * @return 权限树
+     */
+    List<Tree<Long>> findAllTree();
+
     /**
      * 查询按钮
      *
